@@ -1,0 +1,6 @@
+(* Flight Modes *)
+
+
+
+
+Definition VNAV_PTH : nat := 0 

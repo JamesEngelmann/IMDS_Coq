@@ -1,0 +1,18 @@
+DIGEST 702ff5316362e2a745e2c712658775d7
+FFlightModes
+ind 2000:2015 <> autoflight_modes
+constr 2031:2040 <> pitch_mode
+constr 2079:2087 <> roll_mode
+constr 2126:2132 <> at_mode
+R2054:2057 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R2058:2073 FlightModes <> autoflight_modes ind
+R2044:2049 Coq.Init.Datatypes <> option ind
+R2051:2053 Coq.Init.Datatypes <> nat ind
+R2101:2104 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R2105:2120 FlightModes <> autoflight_modes ind
+R2091:2096 Coq.Init.Datatypes <> option ind
+R2098:2100 Coq.Init.Datatypes <> nat ind
+R2146:2149 Coq.Init.Logic <> :type_scope:x_'->'_x not
+R2150:2165 FlightModes <> autoflight_modes ind
+R2136:2141 Coq.Init.Datatypes <> option ind
+R2143:2145 Coq.Init.Datatypes <> nat ind
