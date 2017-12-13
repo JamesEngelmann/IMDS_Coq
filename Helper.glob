@@ -1,0 +1,40 @@
+DIGEST f4e5b8a0fbf186b980b67efb0c498b53
+FHelper
+R54:56 Coq.Init.Nat <> <> lib
+R74:79 Coq.QArith.QArith <> <> lib
+def 126:128 <> Qlt
+R137:137 Coq.QArith.QArith_base <> Q rec
+R142:145 Coq.Init.Datatypes <> bool ind
+R150:150 Coq.Init.Datatypes <> :bool_scope:x_'&&'_x not
+R163:168 Coq.Init.Datatypes <> :bool_scope:x_'&&'_x not
+R151:158 Coq.QArith.QArith_base <> Qle_bool def
+R162:162 Helper <> b var
+R160:160 Helper <> a var
+R169:172 Coq.Init.Datatypes <> negb def
+R175:182 Coq.QArith.QArith_base <> Qeq_bool def
+R186:186 Helper <> b var
+R184:184 Helper <> a var
+def 238:240 <> Qgt
+R249:249 Coq.QArith.QArith_base <> Q rec
+R254:257 Coq.Init.Datatypes <> bool ind
+R281:285 Coq.Init.Datatypes <> :bool_scope:x_'&&'_x not
+R262:265 Coq.Init.Datatypes <> negb def
+R268:275 Coq.QArith.QArith_base <> Qle_bool def
+R279:279 Helper <> b var
+R277:277 Helper <> a var
+R286:289 Coq.Init.Datatypes <> negb def
+R292:299 Coq.QArith.QArith_base <> Qeq_bool def
+R303:303 Helper <> b var
+R301:301 Helper <> a var
+def 357:363 <> gtr_nat
+R372:374 Coq.Init.Datatypes <> nat ind
+R379:382 Coq.Init.Datatypes <> bool ind
+R405:408 Coq.Init.Datatypes <> :bool_scope:x_'&&'_x not
+R387:390 Coq.Init.Datatypes <> negb def
+R393:399 Coq.Arith.PeanoNat Nat leb def
+R403:403 Helper <> b var
+R401:401 Helper <> a var
+R409:412 Coq.Init.Datatypes <> negb def
+R415:421 Coq.Arith.EqNat <> beq_nat syndef
+R425:425 Helper <> b var
+R423:423 Helper <> a var
