@@ -2,10 +2,13 @@ Require Import CoRN.reals.CReals.
 Require Import CoRN.reals.fast.CRIR.
 Require Import CoRN.reals.CauchySeq.
 Require Import CoRN.model.reals.Cauchy_IR.
+Require Import CoRN.reals.fast.CRFieldOps.
 Require Import FlightModes.
 Require Import Nat.
 
 Require Import Coq.Lists.List. Import ListNotations.
+
+Local Open Scope CR_scope.
 
 (* output of stall prediction *)
 
@@ -16,19 +19,21 @@ Inductive StallLevel : Type :=
 
 (* input to stall prediction *) 
 
-Record StallTestParam : Type := mkSParams {
-  mmf_iteration : nat;
-  R_Mode : autoflight_modes;
-  ias_ref : CR;
-  h : CR;
-  cas : CR;
-  V_stall : CR;
-  V_Pred_series : list CR;
+Record StallTestParam : Type := 
+  mkSParams {
+    mmf_iteration : nat;           (* KF iteration *)
+    R_Mode : autoflight_modes;     (* Active Roll Mode *)
+    ias_ref : CR;                  (* Commanded Airspeed *)
+    h : CR;                        (* Current Altitude *)
+    cas : CR;                      (* Current Calibrated Airspeed *)
+    V_stall : CR;                  (* Airspeed Stall (Lower) Limit *)
+    V_Pred_series : list CR;       (* Predicted Airspeed (100s) *)
 }.
 
-Record StallAlertInfo : Set := mkSAlert {
-  tau_stall_memo : nat;
-  tau_stall_caution : nat;
+Record StallAlertInfo : Set := 
+  mkSAlert {
+    tau_stall_memo : nat;         (* Memo Warning Time Threshold == 45s *)
+    tau_stall_caution : nat;      (* Caution Warning Time Threshold == 10s *)
 }.
 
 Fixpoint find_first_stall (i : nat) (V_stall : CR) (l : list CR) : option nat := 
@@ -52,70 +57,7 @@ Definition stall_predict (info : StallAlertInfo) (p : StallTestParam) : StallLev
     end
   else NO_WARNING. 
 
-
-
 Inductive StallTest : Type := mkStall {
   AlertInfo : StallAlertInfo;
   TestParams : StallTestParam;
 }.
-
-Definition AlertTest := mkSAlert 0 0 0 0.
-
-Compute AlertTest.(stall_level).
-
-Check CReals.
-
-Print CReals.
-
-Definition nAlertRule : Type := nat -> nat -> Prop. 
-
-(* Definition V_Pred : nat := 0.  this needs to be changed *)
-
-Record StallTestParam : Type := mkSParams {
-  mmf_iteration : nat;
-  R_Mode : autoflight_modes;
-  ias_ref : IR;
-  h_pred : IR;
-  cas_pred : IR;
-  V_stall : IR;
-}.
-
-Search ltb.
-
-Fixpoint V_Pred_compare (V_Pred : list nat) (V_stall : nat) : option nat :=
-  match V_Pred with
-  | nil => None
-  | h :: t => if (Nat.ltb_lt h V_stall) then (Some h) else (V_Pred_compare t V_stall)
-  end.
-
-
-
-Inductive StallTest : Type := mkStall {
-  AlertInfo : StallAlertInfo;
-  TestParams : StallTestParam;
-  mmfCheck : TestParams.(mmf_iteration) > 25;
-  RCheck : nAlertRule;
-}.
-
-RE
-
-
-Definition Stall :=  mkStall AlertTest ParamTest.
-
-
-Definition ParamTest := mkSParams 0 (roll_mode) (0 = 0) (0 = 0) (0 = 0) (0 = 0).
-
-Check ParamTest.(ias_ref).
-
-
-
-Inductive StallTest : Type := mkStall {
-  AlertInfo : StallAlertInfo;
-  TestParams : StallTestParam;
-}.
-
-Definition Stall :=  mkStall AlertTest ParamTest.
-
-Compute Stall.(AlertInfo).(stall_index).
-
-Check CProp.
