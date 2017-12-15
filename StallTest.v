@@ -51,6 +51,8 @@ Record StallTestParam : Type :=
     cas : Q;                      (* Current Calibrated Airspeed *)
     V_stall : Q;                  (* Airspeed Stall (Lower) Limit *)
     V_Pred_series : list Q;       (* Predicted Airspeed (100s) *)
+    index : nat := 0;
+    h_limit : Q := (inject_Z 500);
 }.
 
 Record StallAlertInfo : Set := 
@@ -117,9 +119,9 @@ Definition get_ias_ref (R_mode : autoflight_modes) (ias_ref : Q) : Q :=
 (* MAIN : Test for stall, output = StallLevel *)
 
 Definition stall_predict (info : StallAlertInfo) (p : StallTestParam) : StallLevel := 
-  if (Qgtb p.(h) (inject_Z 500)) && (Qltb p.(cas) (get_ias_ref p.(R_Mode) p.(ias_ref))) && (geb_nat p.(mmf_iteration) 25)
+  if (Qgtb p.(h) p.(h_limit)) && (Qltb p.(cas) (get_ias_ref p.(R_Mode) p.(ias_ref))) && (geb_nat p.(mmf_iteration) 25)
   then 
-    match find_first_stall O p.(V_stall) p.(V_Pred_series) with 
+    match find_first_stall p.(index) p.(V_stall) p.(V_Pred_series) with 
       | None => NO_WARNING
       | Some stall_index => 
           if (gtrb_nat stall_index info.(tau_stall_caution)) && (Nat.leb stall_index info.(tau_stall_memo)) then MEMO_WARNING
@@ -132,20 +134,21 @@ Definition stall_predict (info : StallAlertInfo) (p : StallTestParam) : StallLev
 Inductive stall_predict_prop : StallAlertInfo -> StallTestParam -> StallLevel -> Prop :=
   | NoWarning : forall i p stall_index,
  
-    (Qgt p.(h) (inject_Z 500)) ->
+    (Qgt p.(h) p.(h_limit)) ->
     (Qlt p.(cas) (get_ias_ref p.(R_Mode) p.(ias_ref))) ->
     (ge p.(mmf_iteration) 25) ->
-    (((find_first_stall 0 p.(V_stall) p.(V_Pred_series) = (Some stall_index))/\(gtr stall_index i.(tau_stall_memo))) 
-    \/ (find_first_stall 0 p.(V_stall) p.(V_Pred_series) = None)) ->
+    (((find_first_stall p.(index) p.(V_stall) p.(V_Pred_series) = (Some stall_index))/\
+       (gtr stall_index i.(tau_stall_memo))) \/ 
+       (find_first_stall p.(index) p.(V_stall) p.(V_Pred_series) = None)) ->
     
     stall_predict_prop i p NO_WARNING
 
   | MemoWarning : forall i p stall_index, 
 
-    (Qgt p.(h) (inject_Z 500)) ->
+    (Qgt p.(h) p.(h_limit)) ->
     (Qlt p.(cas) (get_ias_ref p.(R_Mode) p.(ias_ref))) ->
     (ge p.(mmf_iteration) 25) ->
-    ((find_first_stall 0 p.(V_stall) p.(V_Pred_series) = (Some stall_index))
+    ((find_first_stall p.(index) p.(V_stall) p.(V_Pred_series) = (Some stall_index))
      /\
     (gtr stall_index i.(tau_stall_caution))/\(Nat.le stall_index i.(tau_stall_memo)))  ->
 
@@ -153,10 +156,10 @@ Inductive stall_predict_prop : StallAlertInfo -> StallTestParam -> StallLevel ->
 
   | CautionWarning : forall i p stall_index,
   
-    (Qgt p.(h) (inject_Z 500)) ->
+    (Qgt p.(h) p.(h_limit)) ->
     (Qlt p.(cas) (get_ias_ref p.(R_Mode) p.(ias_ref))) ->
     (ge p.(mmf_iteration) 25) ->
-    ((find_first_stall 0 p.(V_stall) p.(V_Pred_series) = (Some stall_index))
+    ((find_first_stall p.(index) p.(V_stall) p.(V_Pred_series) = (Some stall_index))
      /\
     (Nat.le stall_index i.(tau_stall_caution)))  ->
 
