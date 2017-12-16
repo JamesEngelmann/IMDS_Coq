@@ -168,26 +168,34 @@ Inductive stall_predict_prop : StallAlertInfo -> StallTestParam -> StallLevel ->
 
 (* Prove prediction equivalence (IndProp vs Function)  *)
 
-Theorem predict_match : forall (info : StallAlertInfo) (p : StallTestParam) (warning : StallLevel),
-  stall_predict_prop info p warning <-> (stall_predict info p = warning).
+SearchAbout Qlt.
+
+Lemma Qlt_my : forall (x y : Q), 
+  Qlt x y <-> (Qltb x y = true).
 Proof.
-  intros info p stall_level. split. 
-  - intros H. induction H.
-    + admit.
-    + admit.
-    + admit.
-  - intros H. induction H.
-    + unfold stall_predict.
+intros x y. split.
+intros H. unfold Qltb. unfold negb. apply Qlt_le_weak in H. 
+unfold andb. apply Qle_bool_iff in H. rewrite H. 
+assert (H1 : (Qeq_bool x y = false) -> ((if Qeq_bool x y then false else true) = true)).
+admit. apply H1. 
 Admitted.
 
-(*
-Theorem predict_match : forall (info : StallAlertInfo) (p : StallTestParam) (stall_index : nat), 
-   stall_predict_prop info p (stall_predict info p). 
-Proof.
-  intros info p stall_index. induction stall_predict.
-  - apply NoWarning with stall_index. 
+Axiom Qlt_ax : forall (x y : Q), (Qlt x y) <-> (Qltb x y = true).
+
+Theorem predict_match : forall (info : StallAlertInfo) (p : StallTestParam) (warning : StallLevel),
+  stall_predict_prop info p warning <-> (stall_predict info p = warning).
+Proof. 
+  intros info p stall_level. split. 
+  - intros H. induction H.
+    + unfold ge in H1;unfold not in H1. unfold stall_predict. unfold Qgtb. unfold Qltb. unfold geb_nat.
+      apply Qlt_ax in H. unfold Qltb in H. apply andb_prop in H. destruct H as [Hle Hneq].    
+      admit.
+    + admit.
+    + admit.
+  - intros H. rewrite <- H.
+    + induction stall_level. rewrite H. apply NoWarning with p.(index). unfold stall_predict in H.
+      unfold Qgtb, Qltb in H.
 Admitted.
-*)
 
 (**********************************Sanity Check Data*****************************************)
 
